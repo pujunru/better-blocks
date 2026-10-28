@@ -1,0 +1,10 @@
+{
+	"id": "better-blocks",
+	"name": "Better Blocks",
+	"version": "0.1.0",
+	"minAppVersion": "1.4.0",
+	"description": "Code blocks that render as clean, good-looking diagrams. Starts with a process flow: step cards on a timeline with numbered handoff points.",
+	"author": "Junru Pu",
+	"authorUrl": "https://github.com/pujunru",
+	"isDesktopOnly": false
+}
