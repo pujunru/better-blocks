@@ -18,15 +18,15 @@ That's the whole thing. Three optional extras:
 
 | Write | Get |
 | --- | --- |
-| `① text` | A note for handoff 1, listed under the arrows. |
+| `1. text` or `① text` | A note for handoff 1, listed under the arrows. |
 | An indented line, or `- text`, under a step | A detail under that step's arrow. Put one step per line to use it. |
 | `→ text` right under a step | A note for the handoff after that step. |
 
 ````markdown
 ```better-block-process-flow
 业务决定 → 持久化 → 交给执行方 → 执行 → 记录结果
-① 写库前崩溃：意图丢失
-② outbox 至少一次投递，会重复
+1. 写库前崩溃：意图丢失
+2. outbox 至少一次投递，会重复
 ```
 ````
 

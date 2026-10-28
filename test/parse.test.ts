@@ -27,3 +27,8 @@ test("one step per line, indented or dashed details, → names the next handoff"
 test("labels past the last step are dropped", () => {
 	assert.deepEqual(parseFlow("A → B\n③ nope").labels, [undefined]);
 });
+
+test("1. / 1) / 1、 lines name handoffs too", () => {
+	const f = parseFlow("A → B → C → D\n1. first\n2) second\n3、third");
+	assert.deepEqual(f.labels, ["first", "second", "third"]);
+});

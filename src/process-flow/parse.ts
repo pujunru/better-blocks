@@ -17,7 +17,7 @@ const CIRCLED_ONLY = /^[\s①-⑳]*$/;
  * Three rules:
  *   A → B → C          steps in a chain (or one step per line)
  *     indented / - x   a detail under the step above
- *   ① label            names handoff 1 (or `→ label` right under a step names the one after it)
+ *   ① label / 1. label names handoff 1 (or `→ label` right under a step names the one after it)
  */
 export function parseFlow(source: string): Flow {
 	const flow: Flow = { steps: [], labels: [] };
@@ -27,9 +27,11 @@ export function parseFlow(source: string): Flow {
 		const line = raw.trim();
 		if (!line || CIRCLED_ONLY.test(line)) continue;
 
-		const numbered = line.match(/^([①-⑳])\s*(.+)$/);
-		if (numbered) {
-			flow.labels[numbered[1].charCodeAt(0) - 0x2460] = numbered[2];
+		const circled = line.match(/^([①-⑳])\s*(.+)$/);
+		const numbered = line.match(/^(\d{1,2})[.)、]\s*(.+)$/);
+		if (circled || numbered) {
+			const index = circled ? circled[1].charCodeAt(0) - 0x2460 : Number(numbered![1]) - 1;
+			if (index >= 0) flow.labels[index] = (circled ?? numbered)![2];
 			continue;
 		}
 
