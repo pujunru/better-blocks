@@ -36,18 +36,24 @@
 	margin-right: 0;
 }
 
+/* Outlined arrow: the segment is filled with the step color, and ::before covers it with the
+   page background in the same shape pulled in by the border width. Slanted edges move in a
+   little further horizontally (--bb-d) so they look as thick as the straight ones. */
 .bb-pf-seg {
+	--bb-b: 1.5px;
+	--bb-d: 2px;
+	position: relative;
 	flex: 1;
-	min-height: 52px;
+	min-height: 48px;
 	padding: 8px calc(var(--bb-notch) + 8px) 8px calc(var(--bb-notch) + 10px);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	text-align: center;
 	background: var(--bb-c);
-	color: #fff;
+	color: var(--text-normal);
 	font-size: 0.875em;
-	font-weight: 650;
+	font-weight: 600;
 	letter-spacing: 0.01em;
 	overflow-wrap: anywhere;
 	clip-path: polygon(
@@ -60,15 +66,42 @@
 	);
 }
 
+.bb-pf-seg::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background: color-mix(in srgb, var(--bb-c) 6%, var(--background-primary));
+	clip-path: polygon(
+		calc(var(--bb-d) + 1px) var(--bb-b),
+		calc(100% - var(--bb-notch) - var(--bb-d) + 1px) var(--bb-b),
+		calc(100% - var(--bb-d)) 50%,
+		calc(100% - var(--bb-notch) - var(--bb-d) + 1px) calc(100% - var(--bb-b)),
+		calc(var(--bb-d) + 1px) calc(100% - var(--bb-b)),
+		calc(var(--bb-notch) + var(--bb-d)) 50%
+	);
+}
+
 .is-first > .bb-pf-seg {
 	padding-left: 14px;
 	border-radius: 8px 0 0 8px;
 	clip-path: polygon(0 0, calc(100% - var(--bb-notch)) 0, 100% 50%, calc(100% - var(--bb-notch)) 100%, 0 100%);
 }
 
+.is-first > .bb-pf-seg::before {
+	inset: var(--bb-b) 0 var(--bb-b) var(--bb-b);
+	border-radius: 6.5px 0 0 6.5px;
+	clip-path: polygon(
+		0 0,
+		calc(100% - var(--bb-notch) - var(--bb-d) + 1px) 0,
+		calc(100% - var(--bb-d)) 50%,
+		calc(100% - var(--bb-notch) - var(--bb-d) + 1px) 100%,
+		0 100%
+	);
+}
+
 .bb-pf-seg code {
-	background: rgba(255, 255, 255, 0.2);
-	color: inherit;
+	font-size: 0.95em;
 }
 
 /* Handoff node: centered in the gap between this arrow's tip and the next one's notch. */
@@ -78,7 +111,7 @@
 	left: calc(100% + (var(--bb-notch) - var(--bb-overlap)) / 2);
 	top: 50%;
 	transform: translate(-50%, -50%);
-	box-shadow: 0 0 0 3px var(--background-primary);
+	box-shadow: 0 0 0 2px var(--background-primary);
 }
 
 .bb-pf-num {
@@ -89,10 +122,11 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	background: var(--text-normal);
-	color: var(--background-primary);
-	font-size: 11px;
-	font-weight: 700;
+	border: 1.5px solid var(--text-faint);
+	background: var(--background-primary);
+	color: var(--text-muted);
+	font-size: 10.5px;
+	font-weight: 600;
 	font-variant-numeric: tabular-nums;
 	line-height: 1;
 }

@@ -2,7 +2,7 @@
 
 Code blocks for [Obsidian](https://obsidian.md) that render as diagrams you remember at a glance. No dependencies, a ~2.6 KB script, works in light and dark themes.
 
-The first block is a **process flow**: each step is a colored arrow, and every handoff between steps gets a numbered node. It is made for system design notes, where you sketch a lifecycle and mark every place work changes hands.
+The first block is a **process flow**: each step is an outlined arrow in its own color, and every handoff between steps gets a numbered node. It is made for system design notes, where you sketch a lifecycle and mark every place work changes hands.
 
 ![Process flow](docs/light.png)
 
