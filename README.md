@@ -14,6 +14,8 @@ The first block is a **process flow**: each step is a colored arrow, and every h
 ```
 ````
 
+Or run **Better Blocks: Insert process flow** from the command palette; it inserts the block with `A → B → C` selected.
+
 That's the whole thing. Three optional extras:
 
 | Write | Get |
