@@ -2,41 +2,28 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { parseFlow } from "../src/process-flow/parse.ts";
 
-test("a chain makes every arrow a handoff and ignores a circled-number line", () => {
+test("a chain is the steps; a circled-number sketch line is ignored", () => {
 	const f = parseFlow("业务决定 → 持久化 → 交给执行方 → 执行 → 记录结果\n       ①        ②          ③       ④");
 	assert.deepEqual(f.steps.map((s) => s.title), ["业务决定", "持久化", "交给执行方", "执行", "记录结果"]);
-	assert.equal(f.handoffs.length, 4);
-	assert.ok(f.handoffs.every((h) => h !== null));
+	assert.equal(f.labels.length, 4);
+	assert.ok(f.labels.every((l) => l === undefined));
 });
 
-test("chain accepts -> and subtitles after a pipe", () => {
-	const f = parseFlow("title: T\nA | one -> B");
-	assert.equal(f.title, "T");
-	assert.deepEqual(f.steps[0], { title: "A", subtitle: "one", bullets: [] });
+test("① lines name handoffs by number", () => {
+	const f = parseFlow("A -> B -> C\n② second\n① first");
+	assert.deepEqual(f.labels, ["first", "second"]);
 });
 
-test("rich steps carry bullets and keys; handoffs only where declared", () => {
-	const f = parseFlow(`title: Flow
-badges: numbers
-## A | first
-- x
-- y
-tag: API
-foot: done
-note: n
--> crash | lost
-## B
-## C
-color: teal`);
-	assert.equal(f.badges, "numbers");
-	assert.deepEqual(f.steps[0], { title: "A", subtitle: "first", bullets: ["x", "y"], tag: "API", foot: "done", note: "n" });
-	assert.deepEqual(f.handoffs, [{ label: "crash", detail: "lost" }, null]);
-	assert.equal(f.steps[2].color, "teal");
+test("one step per line, indented or dashed details, → names the next handoff", () => {
+	const f = parseFlow("A\n  detail a\n→ handoff\nB\n- detail b\nC");
+	assert.deepEqual(f.steps, [
+		{ title: "A", details: ["detail a"] },
+		{ title: "B", details: ["detail b"] },
+		{ title: "C", details: [] },
+	]);
+	assert.deepEqual(f.labels, ["handoff", undefined]);
 });
 
-test("plain lines become subtitle, then bullets; stagger can be turned off", () => {
-	const f = parseFlow("stagger: off\n## A\nsub line\nmore");
-	assert.equal(f.stagger, false);
-	assert.equal(f.steps[0].subtitle, "sub line");
-	assert.deepEqual(f.steps[0].bullets, ["more"]);
+test("labels past the last step are dropped", () => {
+	assert.deepEqual(parseFlow("A → B\n③ nope").labels, [undefined]);
 });
