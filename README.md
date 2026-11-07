@@ -64,6 +64,12 @@ The first line is the number you choose (`1`, `2.1`, `B`, `三`), then an option
 
 Both are also commands you can bind to a hotkey.
 
+## Extra tools
+
+Optional helpers that aren't code blocks. Each is off by default; turn it on in **Settings → Better Blocks**.
+
+- **Reveal in file explorer button**: a button in each note's header that locates the note in the file explorer, like IntelliJ's "Select Opened File".
+
 ## Install
 
 Until it is in the community plugin list, install with [BRAT](https://github.com/TfTHacker/obsidian42-brat): add `pujunru/better-blocks`. Or copy `main.js`, `manifest.json` and `styles.css` from the latest release into `.obsidian/plugins/better-blocks/`.

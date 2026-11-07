@@ -1,13 +1,21 @@
 import { Editor, Menu, MenuItem, Plugin } from "obsidian";
 import { renderDivider } from "./divider/render";
+import { RevealInTree } from "./extra-tools/reveal-in-tree";
 import { renderProcessFlow } from "./process-flow/render";
+import { BetterBlocksSettings, BetterBlocksSettingTab, DEFAULT_SETTINGS } from "./settings";
 
 const LANG = "better-block-process-flow";
 const PLACEHOLDER = "A → B → C";
 const DIVIDER = "better-block-divider";
 
 export default class BetterBlocks extends Plugin {
+	settings: BetterBlocksSettings = { ...DEFAULT_SETTINGS };
+	private revealInTree = new RevealInTree(this.app);
+
 	async onload() {
+		this.settings = { ...DEFAULT_SETTINGS, ...(await this.loadData()) };
+		this.addSettingTab(new BetterBlocksSettingTab(this.app, this));
+
 		this.registerMarkdownCodeBlockProcessor(LANG, (source, el) => {
 			renderProcessFlow(source, el);
 		});
@@ -24,13 +32,13 @@ export default class BetterBlocks extends Plugin {
 
 		this.addCommand({
 			id: "insert-divider",
-			name: "Insert numbered divider",
+			name: "Insert divider",
 			editorCallback: (editor: Editor) => insertDivider(editor),
 		});
 
 		this.addCommand({
 			id: "wrap-in-divider",
-			name: "Wrap line in divider",
+			name: "Wrap in divider",
 			editorCallback: (editor: Editor) => wrapInDivider(editor),
 		});
 
@@ -55,6 +63,25 @@ export default class BetterBlocks extends Plugin {
 				});
 			}),
 		);
+
+		// Extra tools: the handlers always run and check their flag, so toggling needs no reload.
+		this.app.workspace.onLayoutReady(() => this.applyExtraTools());
+		this.registerEvent(this.app.workspace.on("layout-change", () => this.applyExtraTools()));
+		this.registerEvent(this.app.workspace.on("file-open", () => this.applyExtraTools()));
+	}
+
+	onunload() {
+		this.revealInTree.clear();
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
+		this.applyExtraTools();
+	}
+
+	private applyExtraTools() {
+		if (this.settings.revealInTree) this.revealInTree.sync();
+		else this.revealInTree.clear();
 	}
 }
 
