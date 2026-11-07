@@ -35,8 +35,16 @@ test("1. / 1) / 1、 lines name handoffs too", () => {
 
 test("divider: number and optional title", async () => {
 	const { parseDivider } = await import("../src/divider/render.ts");
-	assert.deepEqual(parseDivider("1"), { num: "1", title: "" });
-	assert.deepEqual(parseDivider("2. 持久化"), { num: "2", title: "持久化" });
-	assert.deepEqual(parseDivider("  B  Notes\nignored"), { num: "B", title: "Notes" });
-	assert.deepEqual(parseDivider(""), { num: "", title: "" });
+	assert.deepEqual(parseDivider("1"), { num: "1", title: "", level: 1 });
+	assert.deepEqual(parseDivider("2. 持久化"), { num: "2", title: "持久化", level: 1 });
+	assert.deepEqual(parseDivider("  B  Notes\nignored"), { num: "B", title: "Notes", level: 1 });
+	assert.deepEqual(parseDivider(""), { num: "", title: "", level: 1 });
+});
+
+test("divider: 3.1 / 3-1 / 3.1.2 are sub-levels", async () => {
+	const { parseDivider } = await import("../src/divider/render.ts");
+	assert.equal(parseDivider("3.1 空的TCP").level, 2);
+	assert.equal(parseDivider("3-1").level, 2);
+	assert.equal(parseDivider("3.1.2. x").num, "3.1.2");
+	assert.equal(parseDivider("3.1.2. x").level, 3);
 });

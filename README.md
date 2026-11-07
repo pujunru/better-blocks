@@ -57,10 +57,10 @@ A light, hand-numbered section mark for when you want to split text into 1, 2, 3
 ```
 ````
 
-The first line is the number you choose (`1`, `2.1`, `B`, `三`), then an optional title. Right-click in the editor → **Better Blocks** to:
+The first line is the number you choose (`1`, `2.1`, `B`, `三`), then an optional title. `3.1` / `3-1` is a sub-section and `3.1.2` a sub-sub-section, up to four levels: each part of the number after the first is a step smaller (`3` keeps its size), and each level has a shorter line. Right-click in the editor → **Better Blocks** to:
 
 - **Wrap in divider**: turn the current line into a divider. A leading number is kept; otherwise it gets the next one.
-- **Insert divider**: insert one numbered after the nearest divider above.
+- **Insert divider**: insert one numbered after the nearest divider above (`3` → `4`, `3.1` → `3.2`).
 
 Both are also commands you can bind to a hotkey.
 

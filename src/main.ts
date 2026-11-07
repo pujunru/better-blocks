@@ -85,14 +85,14 @@ export default class BetterBlocks extends Plugin {
 	}
 }
 
-/** One past the nearest plain-integer divider above `line`, or 1. */
+/** The nearest divider above `line` with its last number bumped (3 → 4, 3.1 → 3.2), or "1". */
 function nextDividerNumber(editor: Editor, line: number) {
 	for (let i = line - 1; i > 0; i--) {
 		if (editor.getLine(i - 1).trim() !== "```" + DIVIDER) continue;
-		const n = parseInt(editor.getLine(i), 10);
-		return Number.isNaN(n) ? 1 : n + 1;
+		const m = editor.getLine(i).trim().match(/^((?:\d+[.\-_])*)(\d+)/);
+		return m ? m[1] + (Number(m[2]) + 1) : "1";
 	}
-	return 1;
+	return "1";
 }
 
 /**
@@ -118,7 +118,7 @@ function insertDivider(editor: Editor) {
 	const before = editor.getLine(cursor.line).slice(0, cursor.ch).trim() ? "\n" : "";
 	editor.replaceSelection(`${before}\`\`\`${DIVIDER}\n${num}\n\`\`\`\n`);
 	const line = cursor.line + (before ? 2 : 1);
-	editor.setSelection({ line, ch: 0 }, { line, ch: String(num).length });
+	editor.setSelection({ line, ch: 0 }, { line, ch: num.length });
 }
 
 /** Inserts the block on its own lines and selects the placeholder chain so typing replaces it. */
