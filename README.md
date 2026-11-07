@@ -69,6 +69,7 @@ Both are also commands you can bind to a hotkey.
 Optional helpers that aren't code blocks. Each is off by default; turn it on in **Settings → Better Blocks**.
 
 - **Reveal in file explorer button**: a button in each note's header that locates the note in the file explorer, like IntelliJ's "Select Opened File".
+- **Reload file button**: a button in each file's header, and a **Reload current file** command, that reloads the file from disk as if you closed and reopened it, keeping the tab and scroll position. Handy when an Excalidraw drawing or an embed changed outside the tab.
 
 ## Install
 

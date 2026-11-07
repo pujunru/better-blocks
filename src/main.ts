@@ -1,6 +1,7 @@
 import { Editor, Menu, MenuItem, Plugin } from "obsidian";
 import { renderDivider } from "./divider/render";
-import { RevealInTree } from "./extra-tools/reveal-in-tree";
+import { reloadLeaf, revealInTree } from "./extra-tools/actions";
+import { HeaderButton } from "./extra-tools/header-button";
 import { renderProcessFlow } from "./process-flow/render";
 import { BetterBlocksSettings, BetterBlocksSettingTab, DEFAULT_SETTINGS } from "./settings";
 
@@ -10,7 +11,10 @@ const DIVIDER = "better-block-divider";
 
 export default class BetterBlocks extends Plugin {
 	settings: BetterBlocksSettings = { ...DEFAULT_SETTINGS };
-	private revealInTree = new RevealInTree(this.app);
+	private revealButton = new HeaderButton(this.app, "locate-fixed", "Reveal in file explorer", (leaf) =>
+		revealInTree(this.app, leaf),
+	);
+	private reloadButton = new HeaderButton(this.app, "refresh-cw", "Reload file", reloadLeaf);
 
 	async onload() {
 		this.settings = { ...DEFAULT_SETTINGS, ...(await this.loadData()) };
@@ -64,6 +68,17 @@ export default class BetterBlocks extends Plugin {
 			}),
 		);
 
+		this.addCommand({
+			id: "reload-file",
+			name: "Reload current file",
+			checkCallback: (checking) => {
+				const leaf = this.app.workspace.getMostRecentLeaf();
+				if (!this.settings.reloadFile || !leaf) return false;
+				if (!checking) void reloadLeaf(leaf);
+				return true;
+			},
+		});
+
 		// Extra tools: the handlers always run and check their flag, so toggling needs no reload.
 		this.app.workspace.onLayoutReady(() => this.applyExtraTools());
 		this.registerEvent(this.app.workspace.on("layout-change", () => this.applyExtraTools()));
@@ -71,7 +86,8 @@ export default class BetterBlocks extends Plugin {
 	}
 
 	onunload() {
-		this.revealInTree.clear();
+		this.revealButton.clear();
+		this.reloadButton.clear();
 	}
 
 	async saveSettings() {
@@ -80,8 +96,13 @@ export default class BetterBlocks extends Plugin {
 	}
 
 	private applyExtraTools() {
-		if (this.settings.revealInTree) this.revealInTree.sync();
-		else this.revealInTree.clear();
+		for (const [on, button] of [
+			[this.settings.revealInTree, this.revealButton],
+			[this.settings.reloadFile, this.reloadButton],
+		] as const) {
+			if (on) button.sync();
+			else button.clear();
+		}
 	}
 }
 
