@@ -170,3 +170,32 @@
 .bb-pf-note .bb-pf-num {
 	margin-top: 1px;
 }
+
+/* ---------- Divider ---------- */
+
+/* A quiet section mark: serif numeral on a hairline that fades out, so it groups text without
+   cutting the page in two. */
+.bb-dv {
+	display: flex;
+	align-items: baseline;
+	gap: 0.6em;
+	margin: 1.4em 0 0.5em;
+	padding-bottom: 0.2em;
+	background: linear-gradient(to right, var(--text-faint), transparent 85%) left bottom / 100% 1px no-repeat;
+	line-height: 1.1;
+}
+
+.bb-dv-num {
+	font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", serif;
+	font-size: 1.75em;
+	font-weight: 600;
+	font-variant-numeric: lining-nums;
+	color: var(--text-normal);
+}
+
+.bb-dv-title {
+	font-size: 0.9em;
+	font-weight: 500;
+	color: var(--text-muted);
+	letter-spacing: 0.01em;
+}

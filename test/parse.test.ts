@@ -32,3 +32,11 @@ test("1. / 1) / 1、 lines name handoffs too", () => {
 	const f = parseFlow("A → B → C → D\n1. first\n2) second\n3、third");
 	assert.deepEqual(f.labels, ["first", "second", "third"]);
 });
+
+test("divider: number and optional title", async () => {
+	const { parseDivider } = await import("../src/divider/render.ts");
+	assert.deepEqual(parseDivider("1"), { num: "1", title: "" });
+	assert.deepEqual(parseDivider("2. 持久化"), { num: "2", title: "持久化" });
+	assert.deepEqual(parseDivider("  B  Notes\nignored"), { num: "B", title: "Notes" });
+	assert.deepEqual(parseDivider(""), { num: "", title: "" });
+});

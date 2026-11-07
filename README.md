@@ -47,6 +47,23 @@ Arrows can be `→`, `->` or `=>`. A line holding only circled numbers is ignore
 
 ![Dark theme](docs/dark.png)
 
+## Divider
+
+A light, hand-numbered section mark for when you want to split text into 1, 2, 3 without making it a list: a serif number on a thin line that fades out.
+
+````markdown
+```better-block-divider
+2 写库前崩溃
+```
+````
+
+The first line is the number you choose (`1`, `2.1`, `B`, `三`), then an optional title. Right-click in the editor → **Better Blocks** to:
+
+- **Wrap in divider**: turn the current line into a divider. A leading number is kept; otherwise it gets the next one.
+- **Insert divider**: insert one numbered after the nearest divider above.
+
+Both are also commands you can bind to a hotkey.
+
 ## Install
 
 Until it is in the community plugin list, install with [BRAT](https://github.com/TfTHacker/obsidian42-brat): add `pujunru/better-blocks`. Or copy `main.js`, `manifest.json` and `styles.css` from the latest release into `.obsidian/plugins/better-blocks/`.
