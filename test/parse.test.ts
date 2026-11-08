@@ -48,3 +48,14 @@ test("divider: 3.1 / 3-1 / 3.1.2 are sub-levels", async () => {
 	assert.equal(parseDivider("3.1.2. x").num, "3.1.2");
 	assert.equal(parseDivider("3.1.2. x").level, 3);
 });
+
+test("callout: number and title on the first line, the rest kept as markdown", async () => {
+	const { parseCallout } = await import("../src/callout/parse.ts");
+	assert.deepEqual(parseCallout("01 Callout\n1. a\n   b\n2. c\n"), {
+		num: "01",
+		title: "Callout",
+		body: "1. a\n   b\n2. c",
+	});
+	assert.deepEqual(parseCallout("2. 注意"), { num: "2", title: "注意", body: "" });
+	assert.deepEqual(parseCallout("难点\ntext"), { num: "", title: "难点", body: "text" });
+});

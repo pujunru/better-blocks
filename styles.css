@@ -235,3 +235,97 @@
 .bb-dv[data-level="2"] .bb-dv-title { font-size: 0.82em; }
 .bb-dv[data-level="3"] .bb-dv-title { font-size: 0.78em; }
 .bb-dv[data-level="4"] .bb-dv-title { font-size: 0.75em; }
+
+/* ---------- Callout ---------- */
+
+/* A solid label with a leader line: it runs left from the label, then slants down to a ring at the
+   bottom left, so the block reads like an annotation pinned to the page. */
+.bb-co {
+	--bb-co-ink: var(--text-normal);
+	position: relative;
+	min-height: 5.5em;
+	margin: 1.2em 0;
+	padding: 0 0 0.6em 42px;
+	line-height: 1.5;
+}
+
+/* Title only: keep a short leader instead of an empty tall block. */
+.bb-co:not(:has(.bb-co-body)) {
+	min-height: 3.6em;
+}
+
+/* Leader line, drawn as a thin clipped shape: a horizontal run at the label's mid-height (1em),
+   then a slant down to the top of the ring. */
+.bb-co::before {
+	content: "";
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 42px;
+	background: var(--bb-co-ink);
+	clip-path: polygon(
+		42px calc(1em - 0.75px),
+		20px calc(1em - 0.75px),
+		7.25px calc(100% - 12px),
+		8.75px calc(100% - 12px),
+		21.25px calc(1em + 0.75px),
+		42px calc(1em + 0.75px)
+	);
+}
+
+.bb-co::after {
+	content: "";
+	position: absolute;
+	left: 1px;
+	bottom: 0;
+	width: 14px;
+	height: 14px;
+	box-sizing: border-box;
+	border: 2.5px solid var(--bb-co-ink);
+	border-radius: 50%;
+	background: var(--background-primary);
+}
+
+/* 2em tall (1.6 line + 0.2em padding each side), so its middle sits on the leader's 1em run. */
+.bb-co-label {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.45em;
+	padding: 0.2em 0.7em;
+	line-height: 1.6;
+	background: var(--bb-co-ink);
+	color: var(--background-primary);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.bb-co-num {
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+}
+
+.bb-co-body {
+	max-width: 32em;
+	margin-top: 0.5em;
+	font-size: 0.85em;
+	color: var(--text-muted);
+}
+
+/* Obsidian renders the body; tighten its default block margins to fit the callout. */
+.bb-co-body > :first-child {
+	margin-top: 0;
+}
+
+.bb-co-body > :last-child {
+	margin-bottom: 0;
+}
+
+.bb-co-body p,
+.bb-co-body ul,
+.bb-co-body ol {
+	margin: 0.35em 0;
+}
+
+.bb-co code {
+	font-size: 0.95em;
+}

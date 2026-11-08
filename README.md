@@ -64,6 +64,21 @@ The first line is the number you choose (`1`, `2.1`, `B`, `三`), then an option
 
 Both are also commands you can bind to a hotkey.
 
+## Callout
+
+A label pinned to the page: a solid box with a number and title, a leader line down to a ring, and a few lines of text beside it.
+
+````markdown
+```better-block-callout
+01 Callout
+Everything after the title is markdown:
+1. lists, with indented continuation lines
+2. `code`, **bold**, [[links]]
+```
+````
+
+The number is optional. The body is rendered by Obsidian itself, so it behaves exactly like the rest of the note. **Insert callout** (right-click → **Better Blocks**, or the command palette) numbers it after the nearest callout above (`01` → `02`) and selects the title.
+
 ## Extra tools
 
 Optional helpers that aren't code blocks. Each is off by default; turn it on in **Settings → Better Blocks**.

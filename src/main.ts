@@ -1,4 +1,5 @@
-import { Editor, Menu, MenuItem, Plugin } from "obsidian";
+import { Editor, MarkdownRenderChild, MarkdownRenderer, Menu, MenuItem, Plugin } from "obsidian";
+import { renderCallout } from "./callout/render";
 import { renderDivider } from "./divider/render";
 import { reloadLeaf, revealInTree } from "./extra-tools/actions";
 import { HeaderButton } from "./extra-tools/header-button";
@@ -8,6 +9,7 @@ import { BetterBlocksSettings, BetterBlocksSettingTab, DEFAULT_SETTINGS } from "
 const LANG = "better-block-process-flow";
 const PLACEHOLDER = "A → B → C";
 const DIVIDER = "better-block-divider";
+const CALLOUT = "better-block-callout";
 
 export default class BetterBlocks extends Plugin {
 	settings: BetterBlocksSettings = { ...DEFAULT_SETTINGS };
@@ -46,6 +48,21 @@ export default class BetterBlocks extends Plugin {
 			editorCallback: (editor: Editor) => wrapInDivider(editor),
 		});
 
+		this.registerMarkdownCodeBlockProcessor(CALLOUT, (source, el, ctx) => {
+			// The body is rendered by Obsidian, so lists, links and embeds behave as in the note.
+			const child = new MarkdownRenderChild(el);
+			ctx.addChild(child);
+			renderCallout(source, el, (markdown, body) =>
+				MarkdownRenderer.render(this.app, markdown, body, ctx.sourcePath, child),
+			);
+		});
+
+		this.addCommand({
+			id: "insert-callout",
+			name: "Insert callout",
+			editorCallback: (editor: Editor) => insertCallout(editor),
+		});
+
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor) => {
 				menu.addItem((item) => {
@@ -59,6 +76,9 @@ export default class BetterBlocks extends Plugin {
 					);
 					target.addItem((i) =>
 						i.setTitle(`${prefix}Insert divider`).setIcon("list-ordered").onClick(() => insertDivider(editor)),
+					);
+					target.addItem((i) =>
+						i.setTitle(`${prefix}Insert callout`).setIcon("message-square-quote").onClick(() => insertCallout(editor)),
 					);
 					target.addItem((i) =>
 						i.setTitle(`${prefix}Insert process flow`).setIcon("workflow").onClick(() => insertBlock(editor)),
@@ -106,14 +126,31 @@ export default class BetterBlocks extends Plugin {
 	}
 }
 
-/** The nearest divider above `line` with its last number bumped (3 → 4, 3.1 → 3.2), or "1". */
-function nextDividerNumber(editor: Editor, line: number) {
+/**
+ * The number of the nearest `lang` block above `line` with its last part bumped, keeping any
+ * zero padding (3 → 4, 3.1 → 3.2, 01 → 02), or `first` when there is none.
+ */
+function nextNumber(editor: Editor, line: number, lang: string, first: string) {
 	for (let i = line - 1; i > 0; i--) {
-		if (editor.getLine(i - 1).trim() !== "```" + DIVIDER) continue;
+		if (editor.getLine(i - 1).trim() !== "```" + lang) continue;
 		const m = editor.getLine(i).trim().match(/^((?:\d+[.\-_])*)(\d+)/);
-		return m ? m[1] + (Number(m[2]) + 1) : "1";
+		return m ? m[1] + String(Number(m[2]) + 1).padStart(m[2].length, "0") : first;
 	}
-	return "1";
+	return first;
+}
+
+const nextDividerNumber = (editor: Editor, line: number) => nextNumber(editor, line, DIVIDER, "1");
+
+/** Inserts a callout numbered after the nearest one above, with its title selected for typing. */
+function insertCallout(editor: Editor) {
+	const cursor = editor.getCursor();
+	const num = nextNumber(editor, cursor.line, CALLOUT, "01");
+	const title = "Title";
+	const before = editor.getLine(cursor.line).slice(0, cursor.ch).trim() ? "\n" : "";
+	editor.replaceSelection(`${before}\`\`\`${CALLOUT}\n${num} ${title}\nText\n\`\`\`\n`);
+	const line = cursor.line + (before ? 2 : 1);
+	const ch = num.length + 1;
+	editor.setSelection({ line, ch }, { line, ch: ch + title.length });
 }
 
 /**
